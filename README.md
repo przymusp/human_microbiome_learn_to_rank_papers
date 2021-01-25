@@ -42,7 +42,7 @@ files/3644:
 
 ### files anotated_*.csv
 Known files that match specified tag. One file per line.
-Example `anotated_human.csv`:
+Example `anotated_ml.csv`:
 
 ```
 files/3687/Shankar et al_2015_Using Bayesian modelling to investigate factors governing antibiotic-induced.pdf
