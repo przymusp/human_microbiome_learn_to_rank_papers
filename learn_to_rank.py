@@ -13,13 +13,6 @@ from sklearn.linear_model import SGDRegressor
 from sklearn.preprocessing import MinMaxScaler
 
 
-def check_word(dct, word, rep=5):
-    for d in dct.most_common():
-        if word in d[0] and d[1] >= rep:
-            return d[1]
-    return 0
-
-
 def get_annotated_papers(name):
     with open(name, "r") as f:
         return set([l.strip().split("/")[-1] for l in f.readlines()])
@@ -40,12 +33,15 @@ def _weights_normalize(weights):
 
 def l2r(X, Y):
 
+    # Select initial weights
     fs = SelectKBest(k=200)
     X = fs.fit_transform(X, Y)
 
     v = weights_f_classif(X, Y)
 
+    # Compute initial ranking
     rank = np.dot(X, v)
+    # Compute ameliorated ranking (move known relevant papers to top of the ranking)
     rank = rank + 1 * Y * rank
 
     rank = rank.reshape(-1, 1)
@@ -88,7 +84,7 @@ def annotate_papers():
         with open("data_clean.json", "r") as fin:
             data = OrderedDict(json.load(fin))
     except Exception as e:
-        print("Error: File data_clean.csv not found. See README.md")
+        print("Error: File data_clean.json not found. See README.md")
         exit()
 
     data_dict = defaultdict(lambda: defaultdict(int))
@@ -133,7 +129,7 @@ def main():
 
     data = annotate_papers()
     if not data:
-        print("Error: No data found in data_clean.csv. See README.md")
+        print("Error: No data found in data_clean.json. See README.md")
         exit()
 
     df = pd.DataFrame.from_dict(data, orient="index")
